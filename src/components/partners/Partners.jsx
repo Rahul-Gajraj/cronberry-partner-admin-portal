@@ -2,28 +2,12 @@ import React, { useState } from "react";
 import { FileText, Eye, XCircle, Edit2, Search, Filter } from "lucide-react";
 import PartnerDetailDrawer from "./PartnerDetailDrawer";
 
-const mockActivePartners = [
-  {
-    id: 101,
-    name: "Ananya Gupta",
-    email: "ananya@domain.com",
-    mobile: "9876543210",
-    company: "BrightTech",
-    status: "Approved",
-    approvedOn: "2025-04-07",
-    pan: "https://example.com/ananya_pan.pdf",
-    gst: "https://example.com/ananya_gst.pdf",
-    customersOnboarded: 12,
-    revenueGenerated: 250000,
-    lastSaleDate: "2025-04-06",
-    assignedSlabs: [
-      { id: 1, name: "Flat 10% Commission", type: "fixed" },
-      { id: 2, name: "₹5000 Bonus on 5 Sales", type: "bonus" },
-    ],
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { format } from "date-fns";
 
 const Partners = () => {
+  const mockActivePartners = useSelector((state) => state.partners);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedPartner, setSelectedPartner] = useState(null);
@@ -55,8 +39,37 @@ const Partners = () => {
 
   return (
     <div className="p-6 space-y-6 w-full">
-      <h2 className="text-xl font-semibold">Active Partners</h2>
-      <div className="flex gap-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-bold">Active Partners</h1>
+        <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-2 border rounded p-2">
+            <Search size={18} className="text-gray-500" />
+            <input
+              className="w-64"
+              placeholder="Search by name or email"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                outline: "none",
+              }}
+            />
+          </div>
+          <div className="flex items-center gap-2 border rounded p-2">
+            <Filter size={18} className="text-gray-500" />
+            <select
+              className="text-sm cursor-pointer"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              style={{ outline: "none" }}
+            >
+              <option value="">All</option>
+              <option value="Approved">Approved</option>
+              <option value="Suspended">Suspended</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      {/* <div className="flex gap-4">
         <div className="flex items-center gap-2 border rounded p-1">
           <Search size={18} className="text-gray-500" />
           <input
@@ -82,7 +95,7 @@ const Partners = () => {
             <option value="Suspended">Suspended</option>
           </select>
         </div>
-      </div>
+      </div> */}
 
       <div className="overflow-x-auto border rounded">
         <table className="w-full text-sm text-left">
@@ -104,7 +117,11 @@ const Partners = () => {
                 <td className="px-4 py-2">{partner.email}</td>
                 <td className="px-4 py-2">{partner.mobile}</td>
                 <td className="px-4 py-2">{partner.company}</td>
-                <td className="px-4 py-2">{partner.approvedOn}</td>
+                {/* <td className="px-4 py-2">{partner.approvedOn}</td> */}
+                <td className="px-4 py-2">
+                  {format(partner.approvedOn, "yyyy-MM-dd")}
+                </td>
+
                 <td className="px-4 py-2">{getStatusBadge(partner.status)}</td>
                 <td className="px-4 py-2 text-right">
                   <button
@@ -124,7 +141,28 @@ const Partners = () => {
         </table>
       </div>
 
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-between items-center mt-4 text-sm">
+        <p>
+          Page {currentPage} of {totalPages}
+        </p>
+        <div className="flex gap-2">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
+          >
+            Previous
+          </button>
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+      {/* <div className="flex justify-center gap-4">
         <button
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(currentPage - 1)}
@@ -142,7 +180,7 @@ const Partners = () => {
         >
           Next
         </button>
-      </div>
+      </div> */}
 
       {drawerOpen && (
         <PartnerDetailDrawer

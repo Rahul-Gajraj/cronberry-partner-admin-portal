@@ -1,40 +1,19 @@
 import React, { useState } from "react";
 import { Eye, X, CheckCircle, XCircle, Filter, Search } from "lucide-react";
 
-const mockPartners = [
-  {
-    id: 1,
-    name: "Riya Sharma",
-    email: "riya@example.com",
-    mobile: "9876543210",
-    company: "Growthify Pvt Ltd",
-    city: "Jaipur",
-    state: "Rajasthan",
-    pan: "riya_pan.pdf",
-    gst: "riya_gst.pdf",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    name: "Amit Mehra",
-    email: "amit@example.com",
-    mobile: "9123456789",
-    company: "TechNova Solutions",
-    city: "Bangalore",
-    state: "Karnataka",
-    pan: "amit_pan.pdf",
-    gst: "amit_gst.pdf",
-    status: "Pending",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { updatePartners } from "../../store/partnersSlice";
+import { removePartnerApproval } from "../../store/partnerApprovalsSlice";
 
 const mockSlabs = [
-  { id: 1, name: "Flat 10% Commission" },
-  { id: 2, name: "₹5000 Bonus on 5 Sales" },
-  { id: 3, name: "₹25000 Bonus on ₹5L Revenue" },
+  { id: 1, name: "Flat 10% Commission", type: "fixed" },
+  { id: 2, name: "₹5000 Bonus on 5 Sales", type: "bonus" },
+  { id: 3, name: "₹25000 Bonus on ₹5L Revenue", type: "bonus" },
 ];
 
 const PartnerApprovals = () => {
+  const mockPartners = useSelector((state) => state.partnerApprovals);
+
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [showDrawer, setShowDrawer] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -44,6 +23,8 @@ const PartnerApprovals = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSlabs, setSelectedSlabs] = useState([]);
   const itemsPerPage = 5;
+
+  const dispatch = useDispatch();
 
   const filteredPartners = mockPartners.filter(
     (p) =>
@@ -73,6 +54,24 @@ const PartnerApprovals = () => {
     alert(
       "Partner Approved with Slabs: " +
         selectedSlabs.map((s) => s.name).join(", ")
+    );
+    dispatch(removePartnerApproval(selectedPartner.id));
+    dispatch(
+      updatePartners({
+        id: Date.now(),
+        name: selectedPartner.name,
+        email: selectedPartner.email,
+        mobile: selectedPartner.mobile,
+        company: selectedPartner.company,
+        status: "Approved",
+        approvedOn: new Date(),
+        pan: `https://example.com/${selectedPartner.pan}`,
+        gst: `https://example.com/${selectedPartner.gst}`,
+        customersOnboarded: 12,
+        revenueGenerated: 250000,
+        lastSaleDate: "2025-04-06",
+        assignedSlabs: selectedSlabs,
+      })
     );
     setShowDrawer(false);
   };

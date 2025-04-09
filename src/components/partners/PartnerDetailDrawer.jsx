@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FileText, Eye, XCircle, Edit2 } from "lucide-react";
+import { format } from "date-fns";
 
 const mockConversions = [
   {
@@ -207,7 +208,8 @@ const PartnerDetailDrawer = ({
                 {getStatusBadge(selectedPartner.status)}
               </p>
               <p>
-                <strong>Approved On:</strong> {selectedPartner.approvedOn}
+                <strong>Approved On:</strong>{" "}
+                {format(selectedPartner.approvedOn, "yyyy-MM-dd")}
               </p>
               <p>
                 <strong>Last Sale:</strong> {selectedPartner.lastSaleDate}
