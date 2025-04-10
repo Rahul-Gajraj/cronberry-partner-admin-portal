@@ -98,6 +98,10 @@ const Dashboard = () => {
     }
   }, []);
 
+  let renderLabel = function (entry) {
+    return entry.name;
+  };
+
   const totalRevenue = customers.reduce((sum, c) => sum + c.totalPaid, 0);
   const activeCustomers = customers.filter((c) => c.status === "Active").length;
   const averageRevenue = totalRevenue / customers.length;
@@ -146,7 +150,6 @@ const Dashboard = () => {
     value,
     color: COLORS[i % COLORS.length],
   }));
-  console.log(chartData);
 
   const cardColors = [
     "bg-blue-50",
@@ -296,7 +299,7 @@ const Dashboard = () => {
             >
               <XAxis type="number" hide />
               <YAxis dataKey="name" type="category" width={100} />
-              <Tooltip />
+              <Tooltip cursor={{ fill: "transparent" }} />
               <Bar dataKey="revenue" fill="#4f46e5" radius={[4, 4, 4, 4]} />
             </BarChart>
           </ResponsiveContainer>
@@ -311,7 +314,7 @@ const Dashboard = () => {
                 dataKey="value"
                 nameKey="name"
                 outerRadius={80}
-                label={chartData.map((entry) => entry.name)}
+                label={renderLabel}
                 labelLine={false}
               >
                 {chartData.map((entry, i) => (
