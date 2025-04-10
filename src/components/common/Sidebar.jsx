@@ -50,41 +50,41 @@ const menuItems = [
     icon: <BadgeDollarSign className="mr-2" />,
     route: "/commissions",
   },
-  {
-    label: "Notifications & Messaging",
-    icon: <MessageSquareText className="mr-2" />,
-    route: "/notifications",
-  },
-  {
-    label: "Partner Campaigns",
-    icon: <Megaphone className="mr-2" />,
-    route: "/partner-campaigns",
-  },
-  {
-    label: "Audit Logs",
-    icon: <History className="mr-2" />,
-    route: "/audit-logs",
-  },
-  {
-    label: "Support Tickets",
-    icon: <LifeBuoy className="mr-2" />,
-    route: "/support-tickets",
-  },
-  {
-    label: "Content Manager",
-    icon: <BookOpen className="mr-2" />,
-    route: "/content-manager",
-  },
+  // {
+  //   label: "Notifications & Messaging",
+  //   icon: <MessageSquareText className="mr-2" />,
+  //   route: "/notifications",
+  // },
+  // {
+  //   label: "Partner Campaigns",
+  //   icon: <Megaphone className="mr-2" />,
+  //   route: "/partner-campaigns",
+  // },
+  // {
+  //   label: "Audit Logs",
+  //   icon: <History className="mr-2" />,
+  //   route: "/audit-logs",
+  // },
+  // {
+  //   label: "Support Tickets",
+  //   icon: <LifeBuoy className="mr-2" />,
+  //   route: "/support-tickets",
+  // },
+  // {
+  //   label: "Content Manager",
+  //   icon: <BookOpen className="mr-2" />,
+  //   route: "/content-manager",
+  // },
   {
     label: "Announcements",
     icon: <Megaphone className="mr-2" />,
     route: "/announcements",
   },
-  {
-    label: "Settings",
-    icon: <Settings className="mr-2" />,
-    route: "/settings",
-  },
+  // {
+  //   label: "Settings",
+  //   icon: <Settings className="mr-2" />,
+  //   route: "/settings",
+  // },
 ];
 
 const Sidebar = ({ setUser, setIsLoggedIn }) => {
@@ -92,6 +92,13 @@ const Sidebar = ({ setUser, setIsLoggedIn }) => {
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    setUser(null);
+    navigate("/login");
+  };
 
   return (
     <div className="w-64 bg-white shadow-md p-4 flex flex-col justify-between">
@@ -128,6 +135,7 @@ const Sidebar = ({ setUser, setIsLoggedIn }) => {
       <Button
         variant="ghost"
         className="justify-start w-full text-red-600 cursor-pointer"
+        onClick={handleLogout}
       >
         <LogOut className="mr-2" />
         Logout

@@ -13,6 +13,9 @@ import Conversions from "./components/conversions/Conversions";
 import Commissions from "./components/commissions/Commissions";
 import PartnerApprovals from "./components/partner-approvals/PartnerApprovals";
 import Payouts from "./components/payouts/Payouts";
+import Dashboard from "./components/dashboard/Dashboard";
+import Announcements from "./components/announcements/Announcements";
+import Login from "./components/login/Login";
 // import RequestPayouts from "./components/request-payout/RequestPayout";
 // import PaymentMethod from "./components/paymont-method/PaymentMethod";
 // import PayoutHistory from "./components/payout-history/PayoutHistory";
@@ -33,20 +36,24 @@ function App() {
   }, []);
 
   const handleAuth = () => {
-    setIsLoggedIn(true);
-    // const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("user");
     // const storedUsers = localStorage.getItem("users");
 
     // setUsers(storedUsers ? JSON.parse(storedUsers) : []);
 
-    // if (storedUser) {
-    //   const currentUser = JSON.parse(storedUser);
-    //   setUser(currentUser);
-    //   setIsLoggedIn(true);
-    //   navigate("/");
-    // } else {
-    //   navigate("/login");
-    // }
+    if (storedUser) {
+      const currentUser = JSON.parse(storedUser);
+      if (
+        currentUser.email == "admin@cronberry.com" &&
+        currentUser.password == "admin@123"
+      ) {
+        setUser(currentUser);
+        setIsLoggedIn(true);
+        navigate("/");
+      }
+    } else {
+      navigate("/login");
+    }
   };
 
   if (isLoggedIn) {
@@ -55,15 +62,16 @@ function App() {
         <Sidebar setUser={setUser} setIsLoggedIn={setIsLoggedIn} />
         <div className="flex h-screen w-screen">
           <Routes>
-            <Route path="/" element={<></>} />
+            <Route path="/" element={<Dashboard />} />
+            {/* <Route path="/" element={<></>} /> */}
             <Route path="/partners" element={<Partners />} />
 
             <Route path="/conversions" element={<Conversions />} />
             <Route path="/commissions" element={<Commissions />} />
             <Route path="/partner-approvals" element={<PartnerApprovals />} />
             <Route path="/payouts" element={<Payouts />} />
-            {/* <Route path="/announcements" element={<Announcements />} />
-            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/announcements" element={<Announcements />} />
+            {/* <Route path="/edit-profile" element={<EditProfile />} />
             <Route path="/change-password" element={<ChangePassword />} /> */}
           </Routes>
         </div>
@@ -72,29 +80,12 @@ function App() {
   } else {
     return (
       <div className="flex h-screen w-screen">
-        {/* <Routes>
+        <Routes>
           <Route
             path="/login"
-            element={
-              <Login
-                setUser={setUser}
-                setIsLoggedIn={setIsLoggedIn}
-                users={users}
-              />
-            }
+            element={<Login setUser={setUser} setIsLoggedIn={setIsLoggedIn} />}
           />
-          <Route
-            path="/signup"
-            element={
-              <Signup
-                setUser={setUser}
-                setIsLoggedIn={setIsLoggedIn}
-                setUsers={setUsers}
-                users={users}
-              />
-            }
-          />
-        </Routes> */}
+        </Routes>
       </div>
     );
   }
