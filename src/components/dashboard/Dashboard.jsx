@@ -217,17 +217,6 @@ const Dashboard = () => {
                 }
               />
             </label>
-            <select
-              className="ml-2 border rounded p-1 text-sm"
-              value={limit}
-              onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPage(1);
-              }}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-            </select>
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -258,11 +247,24 @@ const Dashboard = () => {
             </tbody>
           </table>
           <div className="flex justify-between items-center mt-4 text-sm">
-            <p>
-              Showing {(page - 1) * limit + 1} -{" "}
-              {Math.min(page * limit, filteredRenewals.length)} of{" "}
-              {filteredRenewals.length}
-            </p>
+            <div className="flex items-center gap-3">
+              <select
+                className="border rounded p-1 text-sm"
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(1);
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+              </select>
+              <p>
+                Showing {(page - 1) * limit + 1} -{" "}
+                {Math.min(page * limit, filteredRenewals.length)} of{" "}
+                {filteredRenewals.length}
+              </p>
+            </div>
             <div className="flex gap-2">
               <button
                 disabled={page === 1}

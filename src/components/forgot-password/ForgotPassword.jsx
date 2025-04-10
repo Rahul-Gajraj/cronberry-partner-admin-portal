@@ -76,7 +76,7 @@ const ForgotPassword = ({ setUser, setIsLoggedIn }) => {
             style={{ width: 100, marginBottom: 12 }}
           />
           <h2 style={{ fontSize: 22, fontWeight: "bold", color: "#4F46E5" }}>
-            Admin Login
+            Admin Forgot Password
           </h2>
         </div>
 
@@ -95,23 +95,6 @@ const ForgotPassword = ({ setUser, setIsLoggedIn }) => {
               placeholder="Enter your email"
             />
           </div>
-          <div style={formGroupStyle}>
-            <label style={labelStyle}>Password *</label>
-            <input
-              type="password"
-              required
-              autoComplete="off"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, password: e.target.value }))
-              }
-              style={inputStyle}
-              placeholder="Enter password"
-            />
-          </div>
-          <div className="float-right text-xs mb-4 cursor-pointer text-blue-400">
-            <p>Forgot Fassword?</p>
-          </div>
           <button
             type="submit"
             style={{
@@ -126,7 +109,7 @@ const ForgotPassword = ({ setUser, setIsLoggedIn }) => {
               borderRadius: 6,
             }}
           >
-            Login
+            Send
           </button>
         </form>
       </div>
