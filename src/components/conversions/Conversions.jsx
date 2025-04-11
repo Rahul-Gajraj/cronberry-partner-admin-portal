@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { XCircle } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
 
 const mockCustomers = [
   {
@@ -13,7 +13,9 @@ const mockCustomers = [
     joinedOn: "2025-04-01",
     renewalDate: "2026-04-01",
     status: "Active",
+    statusColor: "green",
     customNotes: "High value customer. Renew early.",
+    consversionType: "pending",
   },
   {
     id: 2,
@@ -26,7 +28,9 @@ const mockCustomers = [
     joinedOn: "2025-04-03",
     renewalDate: "2025-05-03",
     status: "Inactive",
+    statusColor: "red",
     customNotes: "Follow-up pending.",
+    consversionType: "pending",
   },
 ];
 
@@ -37,6 +41,14 @@ function formatDateTime(date = new Date()) {
   })}`;
 }
 
+const getStatusBadge = (status, color) => (
+  <span
+    className={`inline-block px-2 py-1 text-xs font-semibold text-${color}-700 bg-${color}-100 rounded`}
+  >
+    {status}
+  </span>
+);
+
 function Drawer({
   customer,
   onClose,
@@ -46,6 +58,7 @@ function Drawer({
   handleAddRevenue,
   auditTrail,
   handleNoteAdd,
+  handleConversionTypeChange,
 }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [noteInput, setNoteInput] = useState("");
@@ -208,7 +221,28 @@ function Drawer({
             )}
           </div>
 
-          <div className="mt-6">
+          <div className="mt-8 flex gap-4">
+            <button
+              onClick={() => {
+                handleConversionTypeChange(customer.id, "approved");
+                alert("Approved");
+                onClose();
+              }}
+              className="bg-green-600 text-white px-4 py-2 rounded flex items-center gap-2 cursor-pointer"
+            >
+              <CheckCircle size={16} /> Approve
+            </button>
+            <button
+              onClick={() => {
+                const reason = prompt("Enter reason for rejection:");
+                handleConversionTypeChange(customer.id, "rejected", reason);
+                alert("Rejected");
+                onClose();
+              }}
+              className="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-2 cursor-pointer"
+            >
+              <XCircle size={16} /> Reject
+            </button>
             <button
               onClick={handleSave}
               className="px-4 py-2 bg-blue-700 text-white rounded cursor-pointer"
@@ -216,6 +250,8 @@ function Drawer({
               Save Changes
             </button>
           </div>
+          {/* <div className="mt-6">
+          </div> */}
         </div>
 
         {showConfirm && (
@@ -252,6 +288,36 @@ const Conversions = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [revenueToAdd, setRevenueToAdd] = useState(0);
   const [auditTrail, setAuditTrail] = useState([]);
+  const [activeTab, setActiveTab] = useState("pending");
+  const [filteredResults, setFilteredResults] = useState(mockCustomers);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const itemsPerPage = 5;
+
+  const filtered = filteredResults.filter(
+    (p) => p.consversionType === activeTab
+  );
+  const paginated = filtered.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+  const handleConversionTypeChange = (id, newConversionType, reason = null) => {
+    const updated = customers.map((p) =>
+      p.id === id
+        ? {
+            ...p,
+            consversionType: newConversionType,
+            ...(reason && { rejectReason: reason }),
+          }
+        : p
+    );
+    setCustomers(updated);
+    setFilteredResults(updated);
+    setDrawerOpen(false);
+  };
 
   const handleInputChange = (field, value) => {
     setSelectedCustomer((prev) => {
@@ -304,6 +370,21 @@ const Conversions = () => {
   return (
     <div className="p-6 w-full">
       <h1 className="text-2xl font-bold mb-4">Customer Conversions</h1>
+      <div className="flex gap-4 border-b pb-2 mb-4">
+        {["Pending", "Approved", "Rejected"].map((tab) => (
+          <button
+            key={tab}
+            className={`px-4 py-2 text-sm font-medium border-b-2 cursor-pointer ${
+              activeTab === tab.toLowerCase()
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-500"
+            }`}
+            onClick={() => setActiveTab(tab.toLowerCase())}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
       <table className="w-full table-auto border rounded">
         <thead className="bg-gray-100 text-sm">
           <tr>
@@ -317,7 +398,7 @@ const Conversions = () => {
           </tr>
         </thead>
         <tbody>
-          {customers.map((customer) => (
+          {paginated.map((customer) => (
             <tr key={customer.id} className="border-t text-sm">
               <td className="px-4 py-2">{customer.customerName}</td>
               <td className="px-4 py-2">{customer.email}</td>
@@ -326,7 +407,9 @@ const Conversions = () => {
               <td className="px-4 py-2">
                 ₹{customer.totalPaid.toLocaleString()}
               </td>
-              <td className="px-4 py-2">{customer.status}</td>
+              <td className="px-4 py-2">
+                {getStatusBadge(customer.status, customer.statusColor)}
+              </td>
               <td className="px-4 py-2">
                 <button
                   className="text-blue-600 underline text-sm cursor-pointer"
@@ -354,6 +437,7 @@ const Conversions = () => {
           handleAddRevenue={handleAddRevenue}
           auditTrail={auditTrail}
           handleNoteAdd={handleNoteAdd}
+          handleConversionTypeChange={handleConversionTypeChange}
         />
       )}
     </div>
