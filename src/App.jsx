@@ -50,6 +50,9 @@ function App() {
         setUser(currentUser);
         setIsLoggedIn(true);
         navigate("/");
+      } else {
+        localStorage.removeItem("user");
+        navigate("/login");
       }
     } else {
       navigate("/login");
